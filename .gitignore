@@ -1,0 +1,13 @@
+# Terraform local directory & state
+.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfvars
+
+# Key files
+*.pem
+*.pub
+id_rsa*
+
+# System files
+.DS_Store
