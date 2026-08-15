@@ -1,0 +1,4 @@
+aws_region    = "<aws_region>"
+environment   = "<environment(dev/prod)>"
+instance_type = "<instance_type>"
+my_ip         = "<your_machine_ip>"
