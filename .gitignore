@@ -11,3 +11,14 @@ id_rsa*
 
 # System files
 .DS_Store
+
+# Ansible
+ansible/inventory/hosts.ini
+!ansible/inventory/hosts.ini.example
+*.retry
+
+*.pem
+*.pub
+id_rsa*
+id_ed25519*
+Thumbs.db

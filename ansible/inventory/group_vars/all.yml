@@ -1,0 +1,4 @@
+---
+# Decouple configuration parameters from execution logic
+k3s_exec_flags: "--tls-san {{ inventory_hostname }} --write-kubeconfig-mode 644"
+local_kubeconfig_path: "{{ lookup('env', 'HOME') }}/.kube/config"

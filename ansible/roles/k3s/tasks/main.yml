@@ -1,0 +1,26 @@
+---
+- name: Install K3s control-plane node
+  shell: |
+    curl -sfL https://get.k3s.io | INSTALL_K3S_EXEC="{{ k3s_exec_flags }}" sh -
+  args:
+    creates: /usr/local/bin/k3s
+
+- name: Ensure K3s service is running and enabled
+  systemd:
+    name: k3s
+    state: started
+    enabled: true
+
+- name: Fetch kubeconfig to local machine
+  fetch:
+    src: /etc/rancher/k3s/k3s.yaml
+    dest: "{{ local_kubeconfig_path }}"
+    flat: true
+
+- name: Replace localhost IP in local kubeconfig with EC2 Public IP
+  delegate_to: localhost
+  become: false
+  replace:
+    path: "{{ local_kubeconfig_path }}"
+    regexp: '127\.0\.0\.1'
+    replace: "{{ inventory_hostname }}"
