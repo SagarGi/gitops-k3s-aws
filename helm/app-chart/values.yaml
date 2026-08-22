@@ -70,10 +70,14 @@ probes:
     path: /healthz
     initialDelaySeconds: 15
     periodSeconds: 10
+    timeoutSeconds: 10
+    failureThreshold: 3
   readiness:
     path: /healthz
     initialDelaySeconds: 5
     periodSeconds: 5
+    timeoutSeconds: 10
+    failureThreshold: 3
 volumes: []
 volumeMounts: []
 nodeSelector: {}
