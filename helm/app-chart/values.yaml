@@ -10,7 +10,8 @@ image:
   repository: 504248996735.dkr.ecr.eu-west-2.amazonaws.com/dev-flask-app
   pullPolicy: IfNotPresent
   tag: "latest"
-imagePullSecrets: []
+imagePullSecrets:
+  - name: ecr-secret
 nameOverride: ""
 fullnameOverride: ""
 
