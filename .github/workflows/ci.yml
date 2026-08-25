@@ -8,6 +8,10 @@ on:
       - 'app/**'
       - '.github/workflows/ci.yml'
 
+permissions:
+  id-token: write  # Required for AWS OIDC authentication
+  contents: read   # Required to check out code
+
 jobs:
   build-and-push:
     name: Build & Push OCI Container Image
@@ -27,17 +31,54 @@ jobs:
       - name: Log in to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
+      # this part is when you use the aws secret to instead of oidc
+      # - name: Build, Tag, and Push Image
+      #   env:
+      #     ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+      #     ECR_REPOSITORY: dev-flask-app
+      #     IMAGE_TAG: ${{ github.sha }}
+      #   run: |
+      #     cd app
+      #     # Build image with commit SHA and latest tags
+      #     docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
+          
+      #     # Push both tags to ECR
+      #     docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+      #     docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
 
-      - name: Build, Tag, and Push Image
+      # this part is when you use the oidc instead of aws secrets
+      - name: Extract Short Git SHA
+        id: vars
+        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Build Docker Image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: dev-flask-app
-          IMAGE_TAG: ${{ github.sha }}
+          ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
+          IMAGE_TAG: ${{ steps.vars.outputs.sha_short }}
         run: |
           cd app
-          # Build image with commit SHA and latest tags
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:latest .
-          
-          # Push both tags to ECR
+          docker build \
+            --build-arg APP_VERSION=${IMAGE_TAG} \
+            -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
+            -t $ECR_REGISTRY/$ECR_REPOSITORY:latest \
+            .
+
+      - name: Run Trivy Vulnerability Scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ steps.login-ecr.outputs.registry }}/${{ vars.ECR_REPOSITORY }}:${{ steps.vars.outputs.sha_short }}'
+          format: 'table'
+          exit-code: '0' # Set to 1 if you want to break the pipeline on critical vulnerabilities
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Push Image to ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ vars.ECR_REPOSITORY }}
+          IMAGE_TAG: ${{ steps.vars.outputs.sha_short }}
+        run: |
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest

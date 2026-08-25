@@ -25,3 +25,13 @@ variable "instance_type" {
   type        = string
   default     = "t3.small"
 }
+
+variable "github_username" {
+  type        = string
+  description = "Your GitHub username or organization name"
+}
+
+variable "github_repo" {
+  type        = string
+  description = "Your GitHub repository name"
+}
