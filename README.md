@@ -56,7 +56,7 @@ This project is intentionally scoped for clarity over scale. Each simplification
                      /           |       Group          | Tag Update
                     v            v         v            v
             +-------------------------------------------------+
-            |              AWS EC2 Instance (t3.micro)         |
+            |              AWS EC2 Instance (t3.small)         |
             |  +-------------------------------------------+  |
             |  |         Ansible-Bootstrapped OS           |  |
             |  |  +-------------------------------------+  |  |
@@ -189,7 +189,7 @@ helm install monitoring prometheus-community/kube-prometheus-stack -f k8s/monito
 
 - **No static AWS credentials:** GitHub Actions authenticates via an OIDC IAM role.
 - **Restricted ingress:** SSH allowed only from my IP (or disabled in favor of AWS SSM Session Manager — see Design Tradeoffs).
-- **Cost:** Runs within the AWS Free Tier (`t3.micro`, 12 months). Actual cost is approximately **$0–5/month** depending on data transfer and EBS usage outside free-tier limits — not exactly $0, and I've verified this with AWS Cost Explorer rather than assuming.
+- **Cost:** Runs within the AWS Free Tier (`t3.small`, 12 months). Actual cost is approximately **$0–5/month** depending on data transfer and EBS usage outside free-tier limits — not exactly $0, and I've verified this with AWS Cost Explorer rather than assuming.
 
 ---
 

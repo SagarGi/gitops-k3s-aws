@@ -12,36 +12,36 @@
       - nfs-common
     state: present
 
-  # --- Memory Safety for AWS Free Tier ---
-- name: Check if swapfile exists
-  stat:
-    path: /swapfile
-  register: swapfile_stat
+  # --- Memory Safety for AWS Free Tier working with t2.micro uncomment it ---
+# - name: Check if swapfile exists
+#   stat:
+#     path: /swapfile
+#   register: swapfile_stat
 
-- name: Create 2GB swapfile
-  command: fallocate -l 2G /swapfile
-  when: not swapfile_stat.stat.exists
+# - name: Create 2GB swapfile
+#   command: fallocate -l 2G /swapfile
+#   when: not swapfile_stat.stat.exists
 
-- name: Set permissions on swapfile
-  file:
-    path: /swapfile
-    owner: root
-    group: root
-    mode: '0600'
-  when: not swapfile_stat.stat.exists
+# - name: Set permissions on swapfile
+#   file:
+#     path: /swapfile
+#     owner: root
+#     group: root
+#     mode: '0600'
+#   when: not swapfile_stat.stat.exists
 
-- name: Format swapfile
-  command: mkswap /swapfile
-  when: not swapfile_stat.stat.exists
+# - name: Format swapfile
+#   command: mkswap /swapfile
+#   when: not swapfile_stat.stat.exists
 
-- name: Enable swapfile
-  command: swapon /swapfile
-  when: not swapfile_stat.stat.exists
+# - name: Enable swapfile
+#   command: swapon /swapfile
+#   when: not swapfile_stat.stat.exists
 
-- name: Ensure swap is mounted in /etc/fstab
-  mount:
-    name: none
-    src: /swapfile
-    fstype: swap
-    opts: sw
-    state: present
+# - name: Ensure swap is mounted in /etc/fstab
+#   mount:
+#     name: none
+#     src: /swapfile
+#     fstype: swap
+#     opts: sw
+#     state: present
