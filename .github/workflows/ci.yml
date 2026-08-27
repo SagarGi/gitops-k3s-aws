@@ -10,7 +10,7 @@ on:
 
 permissions:
   id-token: write  # Required for AWS OIDC authentication
-  contents: read   # Required to check out code
+  contents: write   # Required to check out code
 
 jobs:
   build-and-push:
@@ -82,3 +82,17 @@ jobs:
         run: |
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+
+      # push for gitops
+      - name: Update Helm Image Tag in Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          # Update tag in values.yaml using short SHA
+          sed -i "s/tag:.*/tag: \"${{ steps.vars.outputs.sha_short }}\"/" helm/app-chart/values.yaml
+          
+          # Commit and push back to repository
+          git add helm/app-chart/values.yaml
+          git commit -m "chore(ci): update image tag to ${{ steps.vars.outputs.sha_short }} [skip ci]"
+          git push
