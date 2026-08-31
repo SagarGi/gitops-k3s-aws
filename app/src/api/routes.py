@@ -3,7 +3,7 @@ from flask import Blueprint, jsonify
 
 api_bp = Blueprint("api", __name__)
 #this is just for change in the code and to push to check deployments
-app_version = "v1.1.0"
+app_version = "v1.1.1"
 
 @api_bp.route("/")
 def index():
