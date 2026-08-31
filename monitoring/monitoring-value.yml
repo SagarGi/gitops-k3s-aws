@@ -1,0 +1,16 @@
+grafana:
+  adminPassword: "admin" # for default check 
+  grafana.ini:
+    server:
+      domain: 13.134.115.163 #oublic ip of my 
+      root_url: "%(protocol)s://%(domain)s/grafana/"
+      serve_from_sub_path: true
+  ingress:
+    enabled: true
+    ingressClassName: traefik
+    annotations:
+      traefik.ingress.kubernetes.io/router.entrypoints: web
+    hosts:
+      - ""
+    path: /grafana
+    pathType: Prefix
