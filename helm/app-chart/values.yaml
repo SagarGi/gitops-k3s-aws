@@ -9,7 +9,7 @@ replicaCount: 2
 image:
   repository: 504248996735.dkr.ecr.eu-west-2.amazonaws.com/dev-flask-app
   pullPolicy: Always
-  tag: "latest"
+  tag: "843fe20"
 imagePullSecrets:
   - name: ecr-secret
 nameOverride: ""
