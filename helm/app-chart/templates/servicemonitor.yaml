@@ -1,0 +1,15 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ .Release.Name }}-flask-monitor
+  namespace: production
+  labels:
+    release: kube-prometheus-stack
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-flask
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 15s

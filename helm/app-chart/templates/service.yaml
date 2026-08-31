@@ -2,6 +2,8 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ .Release.Name }}-flask-service
+  labels:
+    app: {{ .Release.Name }}-flask
 spec:
   type: {{ .Values.service.type }}
   ports:
